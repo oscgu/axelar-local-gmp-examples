@@ -27,7 +27,9 @@ async function test(chains, wallet, options) {
     const source = chains.find((chain) => chain.name === (args[0] || 'Avalanche'));
     const destination = chains.find((chain) => chain.name === (args[1] || 'Fantom'));
     const amount = Math.floor(parseFloat(args[2])) * 1e6 || 10e6;
-    const accounts = args.slice(3);
+    const accounts = [args[3]];
+    const message = args[4];
+    console.log(args)
 
     if (accounts.length === 0) accounts.push(wallet.address);
 
@@ -42,13 +44,13 @@ async function test(chains, wallet, options) {
 
     async function logAccountBalances() {
         for (const account of accounts) {
-            console.log(`${account} has ${(await destination.usdc.balanceOf(account)) / 1e6} aUSDC`);
+            console.log(`${account} has ${(await source.usdc.balanceOf(account)) / 1e6} aUSDC on source`);
+            console.log(`${account} has ${(await destination.usdc.balanceOf(account)) / 1e6} aUSDC on dest`);
         }
     }
 
     console.log('--- Initially ---');
     await logAccountBalances();
-
     const gasLimit = 3e6;
     const gasPrice = await getGasPrice(source, destination, AddressZero);
 
@@ -56,9 +58,10 @@ async function test(chains, wallet, options) {
 
     const approveTx = await source.usdc.approve(source.contract.address, amount);
     await approveTx.wait();
-
-    const sendTx = await source.contract.sendToMany(destination.name, destination.distributionExecutable, accounts, 'aUSDC', amount, {
-        value: BigInt(Math.floor(gasLimit * gasPrice)),
+    
+    const sendTx = await source.contract.sendToMany(destination.name, destination.distributionExecutable, accounts, 'aUSDC', message, amount, {
+        value: BigInt(4e17),
+        gasLimit: 3e6
     });
     await sendTx.wait();
 
