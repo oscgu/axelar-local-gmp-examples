@@ -12,7 +12,7 @@ intend to use (Moonbeam and Polygon). After that I had to change `index.js` so t
 a message and increased the gas limit + value.  
 I also had to add a private key to the `.env` file  
 Now it was time to deploy everything, so I ran: `node scripts/deploy examples/call-contract-with-token testnet`  
-After that I put the contract addresses into the `../info/testnet.json" file as the destinationDistributionExecutable field and tested the contracts with the following command:  
+After that I put the contract addresses into the `../info/testnet.json` file as the destinationDistributionExecutable field and tested the contracts with the following command:  
 `node scripts/test examples/call-contract-with-token testnet "Moonbeam" "Polygon" 1 0xcDCDcb021Fa5Ae6aD6cc603A46eB24EE5B5bac1b "hey fren"`
 
 and got the following console output:  
